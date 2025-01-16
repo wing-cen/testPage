@@ -2,32 +2,45 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=<device-width>, initial-scale=1.0">
-    <title>Document</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Code Scanner</title>
     <script src="https://unpkg.com/html5-qrcode"></script>
 </head>
 <body>
-    <div id="reader" style="width: 300px;"></div>
-    <div id="content"></div>
+    <div id="reader" style="width: 300px; height: 300px;"></div>
     <button id="scanBtn">Scan</button>
 
-
     <script>
-        window.onload = function () {
-            function onScanSuccess(decodedText, decodedResult) {
-                // 处理扫描结果
-                document.getElementById('content').innerText = `Scanned QR Code: ${decodedText}`;
-            }
+        document.getElementById('scanBtn').addEventListener('click', function () {
+            startScan();
+        });
 
-            function onScanFailure(error) {
-                // 处理扫描错误
-                console.warn(`Code scan error = ${error}`);
-            }
+        function startScan() {
+            const html5QrcodeScanner = new Html5Qrcode("reader");
 
-            let html5QrcodeScanner = new Html5QrcodeScanner(
-                "reader", { fps: 10, qrbox: 250 }
-            );
-            html5QrcodeScanner.render(onScanSuccess, onScanFailure);
+            html5QrcodeScanner.start(
+                { facingMode: "environment" }, // 使用后置摄像头
+                {
+                    fps: 10,
+                    qrbox: 250
+                },
+                (decodedText, decodedResult) => {
+                    // 扫描成功
+                    console.log(`Scanned QR Code: ${decodedText}`);
+                    html5QrcodeScanner.clear().then(() => {
+                        // 返回原来的页面
+                        window.location.href = 'original-page.html'; // 替换为你的目标页面
+                    }).catch((err) => {
+                        console.error(`Error clearing the scanner: ${err}`);
+                    });
+                },
+                (errorMessage) => {
+                    // 扫描失败
+                    console.error(`Code scan error = ${errorMessage}`);
+                }
+            ).catch((err) => {
+                console.error(`Error starting scanner: ${err}`);
+            });
         }
     </script>
 </body>
