@@ -22,17 +22,12 @@
                 { facingMode: "environment" }, // 使用后置摄像头
                 {
                     fps: 10,
-                    qrbox: 250
+                    qrbox: { width: 250, height: 250 }
                 },
                 (decodedText, decodedResult) => {
                     // 扫描成功
                     console.log(`Scanned QR Code: ${decodedText}`);
-                    html5QrcodeScanner.clear().then(() => {
-                        // 返回原来的页面
-                        window.location.href = 'original-page.html'; // 替换为你的目标页面
-                    }).catch((err) => {
-                        console.error(`Error clearing the scanner: ${err}`);
-                    });
+                    html5QrcodeScanner.clear()
                 },
                 (errorMessage) => {
                     // 扫描失败
